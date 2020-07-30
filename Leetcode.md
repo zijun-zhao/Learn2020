@@ -1,3 +1,5 @@
+
+
 1. python ‘//’ 取整，‘%’ 取余
 * 比如，2%10=2.通过%10的操作可以得到个位数
 
@@ -39,9 +41,9 @@ class Solution:
         * |：按位或操作，只有 0|0为0，其他情况为1。
         * ~：逐位取反。
         * ^：异或，相同为0，相异为1。可用于加操作（不包括进位项）。
-        * >>：**右移操作**，2的幂相关
+        * \>>：**右移操作**，2的幂相关
             * A right shift by n bits is defined as division by pow(2,n). 
-        * <<：**左移操作**，2的幂相关
+        * \<<：**左移操作**，2的幂相关
             * A left shift by n bits is defined as multiplication with pow(2,n);
             * 整数以二进制补码的方式存储，**正数右移与负数右移得到的效果并不相同**，负数在右移过程中会自动补 1. 在python中，由于动态语言的特性，数据的位数理想上是不受限制的，因此可通过移位的次数进行判断，int型数据移位不能超过32即可，这样程序的循环次数恒定为32.
                 * 在32位运算中，1<<31(1左移31位)是一个32位的大负数，而1<<32结果为0
@@ -85,10 +87,8 @@ class Solution(object):
             x = -x
         return x if -2147483648 < x < 2147483647 else 0
   ···
-
 * 优化解（boywithacoin_cn）
-    * 构建反转整数的一位数字。在这样做的时候，我们可以预先检查向原整数附加另一位数字是否会导致溢出。
-反转整数的方法可以与反转字符串进行类比。
+    * 构建反转整数的一位数字。在这样做的时候，我们可以预先检查向原整数附加另一位数字是否会导致溢出。反转整数的方法可以与反转字符串进行类比。
 
 我们想重复“弹出” x 的最后一位数字，并将它“推入”到 res 的后面。最后，res 将与 x 相反。
 
@@ -101,3 +101,25 @@ class Solution(object):
 来源：力扣（LeetCode）
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
+
+5. 整数拆分-30/7/2020(ref:jyd)
+* 本题等价于求解：**max(n<sub>1</sub>xn<sub>2</sub>x...n<sub>a</sub>)**
+* 数学推导总体分为两步：① **当所有拆分出的数字相等时，乘积最大**。② 最优拆分数字为 3
+* 根据“算术几何均值不等式” ，等号当且仅当n<sub>1</sub>=n<sub>2</sub>=n<sub>a</sub>时成立
+
+![Alt text](https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQzHsJCTwM2yRSWOYV7dwwriLwhb0tbdc1Zog&usqp=CAU "Optional title")
+    
+* 假设数字n等分为a个，即n=a*x，则乘积为x<sup>a</sup>
+
+    * x<sup>a</sup> = x<sup>n/x</sup>，由于n为固定值，x<sup>n/x</sup> = (x<sup>1/x</sup>)<sup>n</sup>, 因此当 (x<sup>1/x</sup>)最大时乘积最大，通过对该函数求极值，发现x=3时乘积最大，因此只需将数字n尽可能以因子3等分即可
+    
+    
+```python
+class Solution:
+    def integerBreak(self, n: int) -> int:
+        if n <= 3: return n - 1
+        a, b = n // 3, n % 3
+        if b == 0: return int(math.pow(3, a))
+        if b == 1: return int(math.pow(3, a - 1) * 4)
+        return int(math.pow(3, a) * 2)
+```
