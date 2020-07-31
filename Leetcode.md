@@ -110,16 +110,46 @@ class Solution(object):
 ![Alt text](https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQzHsJCTwM2yRSWOYV7dwwriLwhb0tbdc1Zog&usqp=CAU "Optional title")
     
 * 假设数字n等分为a个，即n=a*x，则乘积为x<sup>a</sup>
-
     * x<sup>a</sup> = x<sup>n/x</sup>，由于n为固定值，x<sup>n/x</sup> = (x<sup>1/x</sup>)<sup>n</sup>, 因此当 (x<sup>1/x</sup>)最大时乘积最大，通过对该函数求极值，发现x=3时乘积最大，因此只需将数字n尽可能以因子3等分即可
+    * 余数为1时，将一个1+3转化成2+2
     
     
 ```python
 class Solution:
     def integerBreak(self, n: int) -> int:
-        if n <= 3: return n - 1
+        if n <= 3: 
+            return n - 1
         a, b = n // 3, n % 3
-        if b == 0: return int(math.pow(3, a))
-        if b == 1: return int(math.pow(3, a - 1) * 4)
+        if b == 0: 
+            return int(math.pow(3, a))
+        if b == 1: 
+            return int(math.pow(3, a - 1) * 4)
         return int(math.pow(3, a) * 2)
 ```
+
+* 思路二：将原问题抽象为 f(n)，那么 f(n) 等价于 max(1\*f(n-1), 2\*f(n-2), ..., (n-1)\*f(1))（ref:fe-lucifer)
+    * 转化为代码即：
+        * 也就是说，对于任意整数n,划分为n=n-i+i,那么乘积只有两种可能，i*(n-i)或是i*f(n-i)
+```python
+class Solution:
+    def integerBreak(self, n: int) -> int:
+        if n == 2: 
+            return 1
+        res = 0
+        for i in range(1, n):
+            res = max(res, max(i * self.integerBreak(n - i),i * (n - i)))
+        return res
+```
+* 但以上代码有超时的问题，考虑使用**记忆化递归**的方式来解决。只是用一个**hashtable**存储计算过的值即可。
+```pyhon
+class Solution:
+    @lru_cache()
+    def integerBreak(self, n: int) -> int:
+        if n == 2: 
+            return 1
+        res = 0
+        for i in range(1, n):
+            res = max(res, max(i * self.integerBreak(n - i),i * (n - i)))
+        return res
+```
+* 采用自底向上的思考方式——动态规划
