@@ -86,20 +86,9 @@ class Solution(object):
             x = int(str_x)
             x = -x
         return x if -2147483648 < x < 2147483647 else 0
-  ···
+```
 * 优化解（boywithacoin_cn）
     * 构建反转整数的一位数字。在这样做的时候，我们可以预先检查向原整数附加另一位数字是否会导致溢出。反转整数的方法可以与反转字符串进行类比。
-
-我们想重复“弹出” x 的最后一位数字，并将它“推入”到 res 的后面。最后，res 将与 x 相反。
-
-优化解：
-时间复杂度：O(log(x))，x中大约有log10(x) 位数字。
-空间复杂度：O(1)
-
-作者：
-链接：https://leetcode-cn.com/problems/reverse-integer/solution/pythondan-chu-he-tui-ru-shu-zi-yi-chu-qian-jin-xin/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 
 5. 整数拆分-30/7/2020(ref:jyd)
@@ -112,8 +101,6 @@ class Solution(object):
 * 假设数字n等分为a个，即n=a*x，则乘积为x<sup>a</sup>
     * x<sup>a</sup> = x<sup>n/x</sup>，由于n为固定值，x<sup>n/x</sup> = (x<sup>1/x</sup>)<sup>n</sup>, 因此当 (x<sup>1/x</sup>)最大时乘积最大，通过对该函数求极值，发现x=3时乘积最大，因此只需将数字n尽可能以因子3等分即可
     * 余数为1时，将一个1+3转化成2+2
-    
-    
 ```python
 class Solution:
     def integerBreak(self, n: int) -> int:
@@ -153,3 +140,19 @@ class Solution:
         return res
 ```
 * 采用自底向上的思考方式——动态规划
+    * 这里dp table存储的是f(n)的值, 令dp[i] 等价于 f(i)。
+        * 原问题等价于 f(n)，那么很自然的原问题也等价于 dp[n]
+        * res = max(res, max(i * self.integerBreak(n - i),i * (n - i)))
+           等价于 dp[i] = max(dp[i], max(i * dp(n - i),i * (n - i)))
+           * 需要注意的是，dp是**自底向下**的思考方式，那么在达到n之前是看不到整体的n 的。因此这里的n实际上是 1,2,3,4... n.自然地，我们用一层循环来生成上面一系列的n值。接着我们还要生成一系列的 i 值，注意到**n-i要大于0**的，因此 i 只需要循环到**n-1**即可(对应j in range (1,i))。
+                *  [1] * (n + 1)长度为n+1
+                * 但是dp的最后一个元素索引是dp[n]
+```python
+class Solution:
+    def integerBreak(self, n: int) -> int:
+        dp = [1] * (n + 1)
+        for i in range(3, n + 1):
+            for j in range(1, i):
+                dp[i] = max(j * dp[i - j], j * (i - j), dp[i])
+        return dp[n]
+```
