@@ -139,7 +139,7 @@ class Solution:
             res = max(res, max(i * self.integerBreak(n - i),i * (n - i)))
         return res
 ```
-* 采用自底向上的思考方式——动态规划
+* 采用自底向上的思考方式——动态规划（ref:
     * 这里dp table存储的是f(n)的值, 令dp[i] 等价于 f(i)。
         * 原问题等价于 f(n)，那么很自然的原问题也等价于 dp[n]
         * res = max(res, max(i * self.integerBreak(n - i),i * (n - i)))
